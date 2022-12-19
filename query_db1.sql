@@ -1,3 +1,9 @@
+-- =============================================
+-- Author: Kean Duque
+-- Create date: 12/11/22
+-- Description: SQL test query : Web Dev Simplified
+-- =============================================
+
 -- CREATE DATABASE db_test
 -- DROP DATABASE db_test
 CREATE DATABASE db_company;

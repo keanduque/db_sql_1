@@ -1,3 +1,9 @@
+-- =============================================
+-- Author: Kean Duque
+-- Create date: 12/19/22
+-- Description: SQL test query | Mosh Test
+-- =============================================
+
 SELECT 
 	name,
     unit_price AS 'unit price',
