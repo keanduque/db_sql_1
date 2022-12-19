@@ -182,10 +182,153 @@ JOIN sql_invoicing.payment_methods pm ON pm.payment_method_id = p.payment_method
 -- COMPOUND JOIN Condition
 SELECT * 
 FROM order_items oi
-JOIN order_items;
+JOIN order_item_notes oin
+	ON oi.order_id = oin.order_id
+    AND oi.product_id = oin.product_id;
+
+-- IMPLICIT JOIN Syntax
+/** 
+-- same below query
+SELECT *
+FROM orders o
+JOIN customers c
+	ON o.customer_id = c.customer_id;
+**/
+    
+-- use implicit join CROSS JOIN (avoid this) be aware on this **********
+SELECT *
+FROM orders o, customers c
+WHERE o.customer_id = c.customer_id;
+
+-- OUTER JOIN is LEFT or RIGHT 
+SELECT 
+	c.customer_id,
+	c.first_name,
+	o.order_id
+FROM orders o
+-- JOIN orders o -- doing INNER JOIN 
+-- RIGHT OUTER JOIN customers c -- OUTER JOIN is optional
+-- LEFT OUTER JOIN customers c -- OUTER JOIN is optional
+LEFT OUTER JOIN customers c
+	ON c.customer_id = o.customer_id; -- returning records that match
+
+SELECT 
+	p.product_id, 
+    p.name, 
+    oi.quantity
+FROM products p
+LEFT OUTER JOIN order_items oi
+	ON p.product_id = oi.product_id;
+
+-- OUTER JOINS Between Multiple Tables
+
+SELECT
+	c.customer_id,
+    c.first_name,
+    o.order_id,
+    s.name Shipper
+FROM customers c
+LEFT JOIN orders o
+	ON c.customer_id = o.customer_id
+LEFT JOIN shippers s
+	ON o.shipper_id = s.shipper_id
+ORDER BY c.customer_id;
+
+-- exercise
+SELECT
+	o.order_date,
+    o.order_id,
+    c.first_name,
+    sh.name shipper,
+    ost.name status
+FROM orders o
+JOIN customers c
+	ON c.customer_id = o.customer_id
+LEFT JOIN shippers sh
+	ON sh.shipper_id = o.shipper_id
+LEFT JOIN order_statuses ost
+	ON ost.order_status_id = o.status
+ORDER BY shipper;
+
+-- SELF OUTER JOIN
+
+USE sql_hr;
+
+SELECT
+	e.employee_id,
+    e.first_name,
+    m.first_name AS manager
+FROM employees e
+LEFT JOIN employees m
+	ON m.employee_id = e.reports_to
+ORDER BY manager ASC;
+
+-- THE USING close -- can use only with same column in different tables
+SELECT 
+	o.order_id,
+    c.first_name,
+    sh.name AS shipper
+FROM orders o
+JOIN customers c
+	-- ON o.customer_id = c.customer_id;
+    USING (customer_id)
+LEFT JOIN shippers sh
+	USING (shipper_id);
+
+SELECT *
+FROM order_items oi
+JOIN order_item_notes oin
+	USING (order_id, product_id);
 
 
+SELECT
+	p.date,
+    c.name client,
+    p.amount,
+    pm.name 'Payment Method'
+FROM payments p
+JOIN clients c
+	USING (client_id)
+JOIN payment_methods pm
+	ON pm.payment_method_id = p.payment_method;
+    
+    
+-- NATURAL JOIN (Not Recommend) Guessing joins. producing unexpected results.
+SELECT 
+	o.order_id,
+    c.first_name
+FROM orders o
+NATURAL JOIN customers c;
 
+-- CROSS JOIN (best to use for Sizes, color or variants)
+
+SELECT 
+	c.first_name AS customer,
+    p.name AS product
+-- FROM customers c, products p -- IMPLICIT SYNTAX    
+FROM customers c
+-- EXPLICIT SYNTAX
+CROSS JOIN products p 
+ORDER BY first_name;
+
+-- IMPLICIT
+SELECT 
+	s.name as shipper,
+    p.name as product
+FROM products p, shippers s
+ORDER BY s.name ASC;
+
+-- EXPLICIT
+SELECT 
+	s.name as shipper,
+    p.name as product
+FROM products p
+CROSS JOIN shippers s
+ORDER BY s.name ASC;
+
+-- UNION 
+SELECT * 
+FROM orders;
 
 
 
