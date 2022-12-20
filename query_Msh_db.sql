@@ -372,8 +372,91 @@ FROM customers
 WHERE points > 3000
 ORDER BY first_name ASC;
 
--- COLUMN Attributes 
+-- INSERT ROW to TABLE
 
+INSERT INTO customers (
+	first_name,
+    last_name,
+    birth_date,
+    address,
+    city,
+    state
+)
+VALUES(
+    'Shinichi',
+    'Kudo',
+    '1990-01-01',
+    'koga shi',
+    'ibaraki',
+    'JP'
+);
+SELECT * FROM customers;
+
+-- INSERTING Multiple Rows
+
+INSERT INTO shippers(name)
+VALUES
+	('Shipper1'),
+    ('Shipper2'),
+    ('Shipper3');
+    
+INSERT INTO products(
+	name,
+    quantity_in_stock,
+    unit_price
+)
+VALUES
+	('cottolete',100,2.30),
+    ('mouse',200,14),
+    ('keyboard',520,23);
+    
+-- INSERTING Hierarchical Rows
+
+INSERT INTO orders(customer_id, order_date, status)
+VALUES (13, '2019-02-04', 1);
+
+SELECT LAST_INSERT_ID();  
+-- Return the AUTO_INCREMENT id of the last row that has been inserted or updated in a table:
+INSERT INTO order_items
+VALUES 
+	(LAST_INSERT_ID(), 1,1,2.95),
+    (LAST_INSERT_ID(), 2,1,3.95);
+    
+-- CREATE a copy of a TABLE
+CREATE TABLE orders_archived AS
+SELECT * FROM orders; -- subquery part of another sql statement at top.
+
+INSERT INTO orders_archived -- no need to put the () since you will copy all the columns from order.
+SELECT *  -- subquery in an insert statement.
+FROM orders
+WHERE order_date < '2019-01-01';
+
+USE sql_invoicing;
+
+/*
+Exercise : 
+in invoices table
+id, number, client_id, followed with other columns
+invoices_archived instead of client_id col we need a client name column.
+JOIN with the clients table and use that query as subquery in a CREATE TABLE statement
+copy only invoices that have payment_date
+*/
+CREATE TABLE invoices_archived AS
+SELECT 
+	i.invoice_id,
+    i.number,
+    c.name as client,
+    i.invoice_total,
+    i.payment_total,
+    i.invoice_date,
+    i.due_date,
+    i.payment_date
+FROM invoices i
+JOIN clients c
+	USING(client_id)
+WHERE payment_date IS NOT NULL;
+
+SELECT * FROM invoices;
 
 
 
