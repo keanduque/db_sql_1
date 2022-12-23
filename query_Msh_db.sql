@@ -441,6 +441,7 @@ invoices_archived instead of client_id col we need a client name column.
 JOIN with the clients table and use that query as subquery in a CREATE TABLE statement
 copy only invoices that have payment_date
 */
+USE sql_invoicing;
 CREATE TABLE invoices_archived AS
 SELECT 
 	i.invoice_id,
@@ -456,7 +457,40 @@ JOIN clients c
 	USING(client_id)
 WHERE payment_date IS NOT NULL;
 
+-- Updating a single row
+
+UPDATE invoices
+SET 
+	payment_total = invoice_total * 0.5, 
+	payment_date = due_date
+WHERE invoice_id = 1;
+
 SELECT * FROM invoices;
+
+-- Updating a multiple row
+
+UPDATE invoices
+SET 
+	payment_total = invoice_total * 0.5, 
+	payment_date = due_date
+WHERE client_id = 3;
+-- WHERE client_id IN (3,4);
+
+SELECT * 
+FROM customers
+WHERE birth_date <= '1990-01-01';
+
+UPDATE customers
+SET points = points + 50
+WHERE birth_date <= '1990-01-01';
+
+-- USING Subqueries in Updates
+
+
+
+
+
+
 
 
 
