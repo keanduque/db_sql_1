@@ -485,11 +485,56 @@ SET points = points + 50
 WHERE birth_date <= '1990-01-01';
 
 -- USING Subqueries in Updates
+SELECT * FROM clients;
 
+UPDATE invoices
+SET 
+	payment_total = invoice_total * 0.5, 
+	payment_date = due_date
+WHERE client_id = 
+			(SELECT client_id
+			FROM clients
+			WHERE name = 'Myworks');
+-- MULTIPLE records
+UPDATE invoices
+SET 
+	payment_total = invoice_total * 0.5, 
+	payment_date = due_date
+WHERE client_id IN
+			(SELECT client_id
+			FROM clients
+-- for multiple updates using Subqueries : dont use equal signs instead use IN for WHERE clause
+			WHERE state IN ('CA', 'NY'));
 
+SELECT * FROM invoices
+WHERE payment_date IS NULL;
 
+-- some orders dont have comments
+-- sql statements to update comments for order have more than 3000
+-- regard them as gold customers 
+-- find their orders, if they have place an order  
+-- update the comments column and set it to gold customers.
 
+SELECT * FROM orders WHERE comments IS NULL;
 
+UPDATE orders
+SET 
+	comments = "GOLD CUSTOMER"
+WHERE customer_id IN
+			(SELECT customer_id
+			FROM customers o
+			WHERE points >= 3000);
+            
+-- DELETING ROWS
+
+DELETE FROM invoices
+WHERE client_id = (
+			SELECT client_id
+			FROM clients
+			WHERE name = 'Myworks'
+);
+
+-- Restoring the DB from original state
 
 
 
